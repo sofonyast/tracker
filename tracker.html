@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sofonyas · Dev Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0b0b0c;
+      --surface: #111113;
+      --card:    #161618;
+      --border:  #222226;
+      --border2: #2e2e34;
+      --text:    #ede8df;
+      --muted:   #55524e;
+      --muted2:  #888480;
+      --cream:   #e8dfc8;
+      --web:     #4f8ef7;
+      --mobile:  #3ecf7e;
+      --ai:      #b97af5;
+      --arduino: #f2723a;
+      --gold:    #d4a84b;
+      --red:     #e05c5c;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── SIDEBAR NAV ── */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0 20px;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 0 22px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-logo .name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      color: var(--cream);
+      line-height: 1;
+    }
+
+    .sidebar-logo .agency {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .nav-section-label {
+      font-size: 0.55rem;
+      letter-spacing: 2.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 0 22px 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 22px;
+      font-size: 0.72rem;
+      color: var(--muted2);
+      cursor: pointer;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+      text-decoration: none;
+    }
+
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+    .nav-item.active {
+      color: var(--text);
+      border-left-color: var(--gold);
+      background: rgba(212,168,75,0.06);
+    }
+
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 22px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-footer .streak-mini {
+      font-size: 0.65rem;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      margin-left: 220px;
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: rgba(11,11,12,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1rem;
+      color: var(--cream);
+      font-style: italic;
+    }
+
+    .topbar-date {
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    /* ── PAGES ── */
+    .page { display: none; padding: 36px 36px 60px; }
+    .page.active { display: block; }
+
+    /* ── DASHBOARD PAGE ── */
+    .dash-hero {
+      margin-bottom: 32px;
+    }
+
+    .dash-greeting {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem;
+      letter-spacing: 3px;
+      color: var(--cream);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .dash-subtitle {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-color);
+      opacity: 0.6;
+    }
+
+    .stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      letter-spacing: 2px;
+      color: var(--accent-color);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* Overall progress */
+    .overall-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 28px;
+    }
+
+    .overall-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .overall-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--cream);
+    }
+
+    .overall-pct {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+    }
+
+    .mega-bar {
+      height: 10px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .mega-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--web), var(--mobile), var(--ai), var(--arduino));
+      transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* Track mini bars */
+    .track-bars {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .track-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .track-mini-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.62rem;
+      color: var(--muted2);
+    }
+
+    .track-mini-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .track-mini-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.6s ease;
+    }
+
+    /* Two-col layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Streak calendar */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+    }
+
+    .card-title {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--cream);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title span {
+      font-family: 'DM Mono', monospace;
+      font-style: normal;
+      font-size: 0.62rem;
+      color: var(--gold);
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      border-radius: 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cal-day:hover { border-color: var(--gold); transform: scale(1.05); }
+
+    .cal-day.on {
+      background: rgba(212,168,75,0.2);
+      border-color: var(--gold);
+    }
+
+    .cal-day.today {
+      border-color: var(--cream);
+    }
+
+    .cal-day-label {
+      font-size: 0.45rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cal-day.on .cal-day-label { color: var(--gold); }
+
+    /* Dev log */
+    .devlog-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      padding: 12px 14px;
+      resize: none;
+      outline: none;
+      line-height: 1.6;
+      min-height: 80px;
+      transition: border-color 0.2s;
+    }
+
+    .devlog-input:focus { border-color: var(--gold); }
+    .devlog-input::placeholder { color: var(--muted); }
+
+    .log-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .log-date-tag {
+      font-size: 0.58rem;
+      color: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #0b0b0c;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 7px 18px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+
+    .saved-entries {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .entry-item {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.65rem;
+      color: #9a9590;
+      line-height: 1.55;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: flex-start;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; } }
+
+    .entry-date { color: var(--muted); flex-shrink: 0; }
+
+    .entry-del {
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .entry-del:hover { color: var(--red); }
+
+    /* ── TRACKS PAGE ── */
+    .track-section {
+      margin-bottom: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .track-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .track-head:hover { background: rgba(255,255,255,0.02); }
+
+    .track-head-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .track-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .track-name-big {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--cream);
+    }
+
+    .track-sub {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .track-head-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .track-progress-ring {
+      position: relative;
+      width: 38px; height: 38px;
+    }
+
+    .track-progress-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .ring-bg { fill: none; stroke: var(--border2); stroke-width: 3; }
+    .ring-fill { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+
+    .ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      color: var(--muted2);
+    }
+
+    .chev {
+      color: var(--muted);
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+
+    .chev.open { transform: rotate(180deg); }
+
+    .track-accent-bar {
+      height: 2px;
+    }
+
+    /* Phases list */
+    .phases-body {
+      display: none;
+      padding: 4px 22px 18px;
+    }
+
+    .phases-body.open { display: block; }
+
+    .phase-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .phase-row:last-child { border-bottom: none; }
+
+    .phase-check-btn {
+      width: 22px; height: 22px;
+      border-radius: 7px;
+      border: 2px solid var(--border2);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.2s;
+      font-size: 0.7rem;
+      color: transparent;
+    }
+
+    .phase-check-btn.done {
+      border-color: transparent;
+      color: #0b0b0c;
+    }
+
+    .phase-row-info { flex: 1; }
+
+    .phase-row-name {
+      font-size: 0.78rem;
+      color: var(--text);
+      margin-bottom: 3px;
+      transition: color 0.2s;
+    }
+
+    .phase-row-name.done {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .phase-row-meta {
+      font-size: 0.6rem;
+      color: var(--muted);
+    }
+
+    .phase-row-tags { display: none; } /* replaced by topic list */
+
+    /* Topic checklist inside a phase */
+    .topic-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .topic-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+
+    .topic-item:hover { background: rgba(255,255,255,0.03); }
+
+    .topic-cb {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.6rem;
+      color: transparent;
+      transition: all 0.18s;
+    }
+
+    .topic-item.checked .topic-cb {
+      border-color: transparent;
+      color: #0b0b0c;
+    }
+
+    .topic-label {
+      font-size: 0.7rem;
+      color: var(--muted2);
+      line-height: 1.4;
+      transition: color 0.18s;
+    }
+
+    .topic-item.checked .topic-label {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    /* Phase mini progress bar (topics done) */
+    .phase-topic-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 2px;
+    }
+
+    .phase-tp-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .phase-tp-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.4s ease;
+    }
+
+    .phase-tp-label {
+      font-size: 0.58rem;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 38px;
+      text-align: right;
+    }
+
+    /* Auto-complete flash */
+    @keyframes phaseComplete {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .phase-check-btn.just-done { animation: phaseComplete 0.35s ease; }
+
+    /* Resource role labels */
+    .rc-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.58rem;
+      letter-spacing: 0.8px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .rc-role.warmup   { background: rgba(212,168,75,0.1);  color: var(--gold);   border: 1px solid rgba(212,168,75,0.25); }
+    .rc-role.primary  { background: rgba(79,142,247,0.1);  color: var(--web);    border: 1px solid rgba(79,142,247,0.25); }
+    .rc-role.supplement { background: rgba(62,207,126,0.1); color: var(--mobile); border: 1px solid rgba(62,207,126,0.25); }
+    .rc-role.reference  { background: rgba(185,122,245,0.1); color: var(--ai);   border: 1px solid rgba(185,122,245,0.25); }
+
+    .rc-role-icon { font-size: 0.7rem; }
+
+    /* ── RESOURCES PAGE ── */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .resource-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .resource-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px);
+    }
+
+    .rc-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .rc-track-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .rc-title {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.4;
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    .rc-type {
+      font-size: 0.55rem;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .rc-type.free { background: rgba(62,207,126,0.1); color: var(--mobile); border: 1px solid rgba(62,207,126,0.2); }
+    .rc-type.paid { background: rgba(242,114,58,0.1); color: var(--arduino); border: 1px solid rgba(242,114,58,0.2); }
+
+    .rc-phase {
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .rc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.65rem;
+      color: var(--gold);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .rc-link:hover { opacity: 0.7; }
+
+    /* ── SETTINGS / RESET ── */
+    .settings-section {
+      max-width: 500px;
+    }
+
+    .settings-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+    }
+
+    .settings-title {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+
+    .settings-desc {
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* ── MOBILE BOTTOM NAV ── */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(17,17,19,0.95);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      z-index: 150;
+      padding: 8px 0 env(safe-area-inset-bottom, 8px);
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .mnav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .mnav-icon {
+      font-size: 1rem;
+      color: var(--muted);
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .mnav-label {
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      transition: color 0.15s;
+    }
+
+    .mnav-item.active .mnav-icon,
+    .mnav-item.active .mnav-label { color: var(--gold); }
+
+    @media (max-width: 680px) {
+      .mobile-nav { display: flex; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 100px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 0.7rem;
+      color: var(--cream);
+      z-index: 1000;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Section label */
+    .section-label {
+      font-size: 0.58rem;
+      letter-spacing: 2.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      margin-top: 24px;
+    }
+
+    .section-label:first-child { margin-top: 0; }
+
+    /* Page header */
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 3px;
+      color: var(--cream);
+      line-height: 1;
+    }
+
+    .page-header p {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Channels grid */
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .channel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .channel-card:hover { border-color: var(--border2); }
+
+    .channel-name {
+      font-size: 0.75rem;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .channel-desc {
+      font-size: 0.6rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .channel-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.6rem;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .channel-link:hover { opacity: 0.7; }
+
+    /* ── HAMBURGER (hidden on desktop) ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .hamburger:hover { background: rgba(255,255,255,0.05); }
+    .hamburger span {
+      width: 22px; height: 2px;
+      background: var(--muted2);
+      border-radius: 2px;
+      transition: all 0.25s;
+      display: block;
+    }
+
+    /* Overlay (hidden on desktop) */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 99;
+      backdrop-filter: blur(2px);
+    }
+
+    /* ── TABLET (≤ 900px) ── */
+    @media (max-width: 900px) {
+      .sidebar { width: 190px; }
+      .main { margin-left: 190px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .channels-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── MOBILE (≤ 680px) ── */
+    @media (max-width: 680px) {
+      /* Sidebar slides in */
+      .sidebar {
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        z-index: 200;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .overlay { display: block; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+      .overlay.visible { opacity: 1; pointer-events: all; }
+
+      /* Main takes full width */
+      .main { margin-left: 0; }
+
+      /* Hamburger visible */
+      .hamburger { display: flex !important; }
+
+      /* Topbar */
+      .topbar { padding: 12px 16px; }
+      .topbar-date { display: none; }
+      .topbar-title { font-size: 0.85rem; }
+
+      /* Pages */
+      .page { padding: 20px 16px 80px; }
+
+      /* Dashboard hero */
+      .dash-greeting { font-size: 2rem; letter-spacing: 1px; }
+      .dash-subtitle { font-size: 0.62rem; }
+
+      /* Stats — 2 col on mobile */
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+      .stat-card { padding: 14px 12px; }
+      .stat-val { font-size: 1.8rem; }
+      .stat-lbl { font-size: 0.55rem; }
+
+      /* Overall card */
+      .overall-card { padding: 16px; margin-bottom: 16px; }
+      .overall-title { font-size: 0.82rem; }
+      .track-bars { grid-template-columns: 1fr; gap: 8px; }
+
+      /* Two col → single col */
+      .two-col { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+
+      /* Calendar — smaller cells */
+      .cal-grid { gap: 4px; }
+      .cal-day-label { font-size: 0.42rem; }
+
+      /* Dev log */
+      .devlog-input { min-height: 70px; font-size: 0.68rem; }
+
+      /* Page headers */
+      .page-header h2 { font-size: 1.6rem; letter-spacing: 2px; }
+      .page-header { margin-bottom: 18px; }
+
+      /* Resources — single col */
+      .resources-grid { grid-template-columns: 1fr; gap: 10px; }
+      .resource-card { padding: 14px 16px; }
+      .rc-title { font-size: 0.74rem; }
+
+      /* Channels — single col */
+      .channels-grid { grid-template-columns: 1fr; gap: 8px; }
+
+      /* Tracks */
+      .track-head { padding: 14px 16px; }
+      .track-icon { width: 30px; height: 30px; font-size: 0.85rem; }
+      .track-name-big { font-size: 0.9rem; }
+      .phases-body { padding: 4px 16px 14px; }
+      .phase-row-tags { gap: 4px; }
+      .tag { font-size: 0.55rem; padding: 2px 6px; }
+
+      /* Cards */
+      .card { padding: 16px; }
+      .card-title { font-size: 0.82rem; }
+
+      /* Settings */
+      .settings-section { max-width: 100%; }
+      .settings-card { padding: 16px; }
+
+      /* Toast */
+      .toast { right: 12px; bottom: 16px; font-size: 0.65rem; padding: 10px 14px; }
+    }
+
+    /* ── TINY MOBILE (≤ 380px) ── */
+    @media (max-width: 380px) {
+      .dash-greeting { font-size: 1.6rem; }
+      .stats-grid { gap: 8px; }
+      .stat-val { font-size: 1.5rem; }
+      .page { padding: 16px 12px 80px; }
+      .cal-grid { gap: 3px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-nav" id="mobile-nav">
+  <a class="mnav-item active" onclick="goTo('dashboard',this)" data-page="dashboard">
+    <div class="mnav-icon">◈</div><div class="mnav-label">Home</div>
+  </a>
+  <a class="mnav-item" onclick="goTo('tracks',this)" data-page="tracks">
+    <div class="mnav-icon">◉</div><div class="mnav-label">Tracks</div>
+  </a>
+  <a class="mnav-item" onclick="goTo('resources',this)" data-page="resources">
+    <div class="mnav-icon">▶</div><div class="mnav-label">Resources</div>
+  </a>
+  <a class="mnav-item" onclick="goTo('channels',this)" data-page="channels">
+    <div class="mnav-icon">☆</div><div class="mnav-label">Channels</div>
+  </a>
+  <a class="mnav-item" onclick="goTo('settings',this)" data-page="settings">
+    <div class="mnav-icon">⊙</div><div class="mnav-label">More</div>
+  </a>
+</nav>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="name">Sofonyas</div>
+    <div class="agency">Pixel Creatives · Dev Roadmap</div>
+  </div>
+
+  <div class="nav-section-label">Navigate</div>
+
+  <a class="nav-item active" data-page="dashboard" onclick="goTo('dashboard', this)">
+    <div class="nav-dot" style="background:var(--gold)"></div> Dashboard
+  </a>
+  <a class="nav-item" data-page="tracks" onclick="goTo('tracks', this)">
+    <div class="nav-dot" style="background:var(--web)"></div> Tracks & Phases
+  </a>
+  <a class="nav-item" data-page="resources" onclick="goTo('resources', this)">
+    <div class="nav-dot" style="background:var(--mobile)"></div> Resources
+  </a>
+  <a class="nav-item" data-page="channels" onclick="goTo('channels', this)">
+    <div class="nav-dot" style="background:var(--ai)"></div> YouTube Channels
+  </a>
+  <a class="nav-item" data-page="settings" onclick="goTo('settings', this)">
+    <div class="nav-dot" style="background:var(--muted)"></div> Settings
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="streak-mini">🔥 <span id="sidebar-streak">0</span> day streak</div>
+  </div>
+</nav>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="topbar-title">Dev Roadmap Tracker</div>
+    </div>
+    <div class="topbar-date" id="topbar-date"></div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div class="page active" id="page-dashboard">
+    <div class="dash-hero">
+      <div class="dash-greeting" id="dash-greeting">GOOD MORNING</div>
+      <div class="dash-subtitle">Track your progress. Ship things. Stay consistent.</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent-color:var(--gold)">
+        <div class="stat-val" id="stat-done">0</div>
+        <div class="stat-lbl">Phases Done</div>
+      </div>
+      <div class="stat-card" style="--accent-color:var(--web)">
+        <div class="stat-val" id="stat-total">14</div>
+        <div class="stat-lbl">Total Phases</div>
+      </div>
+      <div class="stat-card" style="--accent-color:var(--mobile)">
+        <div class="stat-val" id="stat-streak">0</div>
+        <div class="stat-lbl">Day Streak 🔥</div>
+      </div>
+      <div class="stat-card" style="--accent-color:var(--ai)">
+        <div class="stat-val" id="stat-logs">0</div>
+        <div class="stat-lbl">Dev Log Entries</div>
+      </div>
+    </div>
+
+    <!-- Overall -->
+    <div class="overall-card">
+      <div class="overall-header">
+        <div class="overall-title">Overall Roadmap Progress</div>
+        <div class="overall-pct" id="overall-pct">0%</div>
+      </div>
+      <div class="mega-bar">
+        <div class="mega-bar-fill" id="mega-fill" style="width:0%"></div>
+      </div>
+      <div class="track-bars">
+        <div class="track-mini">
+          <div class="track-mini-label">
+            <span>🌐 Full-Stack Web</span>
+            <span id="mini-pct-web">0%</span>
+          </div>
+          <div class="track-mini-bar"><div class="track-mini-fill" id="mini-fill-web" style="width:0%;background:var(--web)"></div></div>
+        </div>
+        <div class="track-mini">
+          <div class="track-mini-label">
+            <span>📱 Mobile</span>
+            <span id="mini-pct-mobile">0%</span>
+          </div>
+          <div class="track-mini-bar"><div class="track-mini-fill" id="mini-fill-mobile" style="width:0%;background:var(--mobile)"></div></div>
+        </div>
+        <div class="track-mini">
+          <div class="track-mini-label">
+            <span>🤖 AI / ML</span>
+            <span id="mini-pct-ai">0%</span>
+          </div>
+          <div class="track-mini-bar"><div class="track-mini-fill" id="mini-fill-ai" style="width:0%;background:var(--ai)"></div></div>
+        </div>
+        <div class="track-mini">
+          <div class="track-mini-label">
+            <span>⚡ Arduino / IoT</span>
+            <span id="mini-pct-arduino">0%</span>
+          </div>
+          <div class="track-mini-bar"><div class="track-mini-fill" id="mini-fill-arduino" style="width:0%;background:var(--arduino)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two col -->
+    <div class="two-col">
+      <!-- Streak calendar -->
+      <div class="card">
+        <div class="card-title">
+          Study Streak — Last 4 Weeks
+          <span id="streak-count-label">0 days</span>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+
+      <!-- Dev Log -->
+      <div class="card">
+        <div class="card-title">Daily Dev Log</div>
+        <textarea class="devlog-input" id="log-input" placeholder="What did you learn today? What confused you? What's next?"></textarea>
+        <div class="log-actions">
+          <div class="log-date-tag" id="log-date"></div>
+          <button class="btn-primary" onclick="saveLog()">Save Entry</button>
+        </div>
+        <div class="saved-entries" id="saved-entries"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TRACKS PAGE ── -->
+  <div class="page" id="page-tracks">
+    <div class="page-header">
+      <h2>TRACKS & PHASES</h2>
+      <p>Expand a track → expand a phase → tick each topic as you learn it. Phase auto-completes when all topics are ticked.</p>
+    </div>
+    <div id="tracks-container"></div>
+  </div>
+
+  <!-- ── RESOURCES PAGE ── -->
+  <div class="page" id="page-resources">
+    <div class="page-header">
+      <h2>RESOURCES</h2>
+      <p>All free courses, playlists, and references for every phase.</p>
+    </div>
+    <div class="resources-grid" id="resources-grid"></div>
+  </div>
+
+  <!-- ── CHANNELS PAGE ── -->
+  <div class="page" id="page-channels">
+    <div class="page-header">
+      <h2>YOUTUBE CHANNELS</h2>
+      <p>Subscribe to all of these. Let the algorithm work for you.</p>
+    </div>
+    <div class="channels-grid" id="channels-grid"></div>
+  </div>
+
+  <!-- ── SETTINGS ── -->
+  <div class="page" id="page-settings">
+    <div class="page-header">
+      <h2>SETTINGS</h2>
+      <p>Manage your progress data.</p>
+    </div>
+    <div class="settings-section">
+      <div class="settings-card">
+        <div class="settings-title">Export Progress</div>
+        <div class="settings-desc">Download a JSON backup of all your progress, logs, and streak data.</div>
+        <button class="btn-primary" onclick="exportData()">Export JSON</button>
+      </div>
+      <div class="settings-card">
+        <div class="settings-title">Reset All Progress</div>
+        <div class="settings-desc">This will clear all checked phases, streak days, and dev log entries. This cannot be undone.</div>
+        <button class="btn-ghost" onclick="resetAll()">Reset Everything</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const TRACKS = [
+  {
+    id: 'web', name: 'Full-Stack Web', icon: '🌐', color: '#4f8ef7',
+    desc: '5 phases · Weeks 1–24',
+    phases: [
+      { name: 'JavaScript Deep Dive', duration: 'Weeks 1–4', topics: [
+        'ES6+ syntax (let/const, template literals, spread/rest)',
+        'Arrow functions & default parameters',
+        'Destructuring (arrays & objects)',
+        'Promises & .then()/.catch() chaining',
+        'async/await',
+        'Fetch API & working with JSON',
+        'DOM manipulation & events',
+        'Event delegation & bubbling',
+        'JavaScript modules (import/export)',
+        'LocalStorage & SessionStorage',
+        'Error handling (try/catch/finally)',
+        'Higher-order functions (map, filter, reduce)',
+        'Closures & scope',
+        'The "this" keyword',
+        'Event loop & call stack',
+      ]},
+      { name: 'React', duration: 'Weeks 5–10', topics: [
+        'JSX syntax',
+        'Functional components',
+        'Props & prop drilling',
+        'useState hook',
+        'useEffect hook',
+        'Conditional & list rendering',
+        'React Router (useNavigate, useParams)',
+        'Context API',
+        'Custom hooks',
+        'useReducer',
+        'Tailwind CSS with React',
+        'Controlled form inputs & validation',
+        'React Query basics',
+        'Deploying to Vercel',
+      ]},
+      { name: 'Node.js + Express', duration: 'Weeks 11–14', topics: [
+        'Node.js core modules (fs, path, http)',
+        'npm & package.json',
+        'Express server setup',
+        'Routing & middleware',
+        'REST API design (GET/POST/PUT/DELETE)',
+        'Request & response objects',
+        'Route parameters & query strings',
+        'MVC architecture pattern',
+        'MongoDB CRUD operations',
+        'Mongoose schemas & models',
+        'dotenv & environment variables',
+        'JWT authentication',
+        'Bcrypt password hashing',
+        'File uploads with Multer',
+        'Error handling middleware',
+        'Deploy backend to Railway/Render',
+      ]},
+      { name: 'Next.js', duration: 'Weeks 15–20', topics: [
+        'What Next.js adds over React',
+        'App Router & file-based routing',
+        'Layouts, loading & error boundaries',
+        'Server components vs client components',
+        'Data fetching & caching strategies',
+        'Static Site Generation (SSG)',
+        'Server-Side Rendering (SSR)',
+        'API routes',
+        'Dynamic routes & route groups',
+        'Image & Font optimization',
+        'Middleware',
+        'NextAuth.js authentication',
+        'Prisma ORM setup',
+        'PostgreSQL integration',
+        'Deploy to Vercel',
+      ]},
+      { name: 'Vue.js', duration: 'Weeks 21–24', topics: [
+        'Vue 3 vs React — key differences',
+        'Template syntax & directives (v-if, v-for, v-bind, v-on)',
+        'v-model (two-way binding)',
+        'Composition API',
+        'ref() & reactive()',
+        'Computed properties & watchers',
+        'Vue Router (navigation & route guards)',
+        'Pinia state management',
+        'Component props & emits',
+        'Slots',
+        'Lifecycle hooks',
+        'Axios for HTTP requests',
+        'Nuxt.js basics',
+        'Building & deploying a Vue app',
+      ]},
+    ]
+  },
+  {
+    id: 'mobile', name: 'Mobile Dev', icon: '📱', color: '#3ecf7e',
+    desc: '3 phases · Months 6–14',
+    phases: [
+      { name: 'React Native', duration: 'Months 6–8', topics: [
+        'React Native vs React — how it works',
+        'Expo setup & Expo Go app',
+        'Core components (View, Text, Image, ScrollView)',
+        'FlatList & SectionList',
+        'StyleSheet & Flexbox on mobile',
+        'React Navigation (Stack, Tab, Drawer)',
+        'useState & useEffect in mobile context',
+        'AsyncStorage',
+        'Camera & permissions via Expo',
+        'Fetching APIs in React Native',
+        'Handling keyboard & safe areas',
+        'Platform differences (iOS vs Android)',
+        'Building forms & inputs',
+        'EAS Build & publishing to both stores',
+      ]},
+      { name: 'SwiftUI — GymSplit!', duration: 'Months 9–11', topics: [
+        'Swift basics (variables, optionals, arrays, dicts)',
+        'Functions, closures & structs',
+        'Classes, enums & protocols',
+        'SwiftUI views & modifiers',
+        'HStack, VStack, ZStack layouts',
+        '@State & @Binding',
+        '@ObservedObject & @StateObject',
+        '@EnvironmentObject',
+        'NavigationStack',
+        'Lists & ForEach',
+        'Forms & input handling',
+        'Sheets, alerts & modals',
+        'SF Symbols',
+        'CoreData for local persistence',
+        'URLSession & Codable (networking)',
+        'MVVM architecture in SwiftUI',
+        'Animations & transitions',
+        'TestFlight & App Store submission',
+      ]},
+      { name: 'Kotlin + Jetpack Compose', duration: 'Months 12–14', topics: [
+        'Kotlin basics (variables, null safety)',
+        'Data classes & extension functions',
+        'Lambdas & higher-order functions',
+        'Coroutines basics',
+        'Jetpack Compose — composable functions',
+        'Recomposition & state in Compose',
+        'remember & mutableStateOf',
+        'Column, Row, Box layouts',
+        'LazyColumn & LazyRow',
+        'Navigation in Compose (NavController)',
+        'ViewModel & StateFlow',
+        'Room database',
+        'Retrofit for API calls',
+        'Hilt dependency injection (basics)',
+        'Material Design 3 components',
+        'Handling permissions in Android',
+        'Signing & publishing to Play Store',
+      ]},
+    ]
+  },
+  {
+    id: 'ai', name: 'AI / ML', icon: '🤖', color: '#b97af5',
+    desc: '3 phases · Months 7–11+',
+    phases: [
+      { name: 'Python Fundamentals', duration: 'Months 7–8', topics: [
+        'Variables, data types & strings',
+        'Lists, tuples, dictionaries & sets',
+        'Conditionals & loops',
+        'Functions (args, kwargs, return)',
+        'OOP — classes, objects, inheritance',
+        'File I/O (reading & writing files)',
+        'Exception handling',
+        'List comprehensions',
+        'Modules & pip',
+        'NumPy — arrays & math operations',
+        'Pandas — dataframes & CSV handling',
+        'Matplotlib — basic charts',
+        'Virtual environments',
+      ]},
+      { name: 'ML Fundamentals', duration: 'Months 8–10', topics: [
+        'What ML is — types (supervised/unsupervised/RL)',
+        'Linear regression',
+        'Logistic regression & classification',
+        'Gradient descent',
+        'Overfitting, underfitting & regularization',
+        'Neural networks — layers & activation functions',
+        'Training — forward pass & backpropagation',
+        'Loss functions',
+        'scikit-learn — building & evaluating models',
+        'Decision trees & random forests',
+        'K-nearest neighbors',
+        'Model evaluation (accuracy, precision, F1)',
+        'Train/test/validation splits',
+        'Intro to TensorFlow/Keras',
+        'Computer vision basics (CNNs)',
+        'NLP basics — tokenization & text preprocessing',
+      ]},
+      { name: 'AI Integration', duration: 'Month 11+', topics: [
+        'OpenAI API — chat completions & streaming',
+        'Anthropic API (Claude) from Node.js',
+        'Prompt engineering — system prompts & few-shot',
+        'Chain-of-thought prompting',
+        'Function calling in AI APIs',
+        'Embeddings & semantic search',
+        'Vector databases (Pinecone / Chroma)',
+        'RAG — retrieval augmented generation',
+        'LangChain — pipelines, agents & memory',
+        'Streaming AI responses to frontend',
+        'Rate limiting & cost management',
+        'Hugging Face — open-source models',
+        'Fine-tuning basics',
+        'Build an AI feature into a Next.js app',
+      ]},
+    ]
+  },
+  {
+    id: 'arduino', name: 'Arduino / IoT', icon: '⚡', color: '#f2723a',
+    desc: '3 phases · Weekends from Month 3',
+    phases: [
+      { name: 'Arduino Basics', duration: 'Weekends, Month 3+', topics: [
+        'Arduino IDE setup',
+        'How microcontrollers work',
+        'Digital vs analog pins',
+        'Blink an LED (hardware hello world)',
+        'Reading button input',
+        'PWM — LED brightness & servo control',
+        'Potentiometer & LDR (light sensor)',
+        'Temperature sensor (TMP36 / DHT11)',
+        'Ultrasonic distance sensor (HC-SR04)',
+        'Servo motors',
+        'Buzzer & tone()',
+        'I2C protocol & OLED display (SSD1306)',
+        'Serial monitor debugging',
+      ]},
+      { name: 'ESP32 + IoT', duration: 'Weekends, Month 6+', topics: [
+        'ESP32 vs Arduino — key differences',
+        'ESP32 setup in Arduino IDE',
+        'Connecting to WiFi',
+        'HTTP requests from ESP32',
+        'WebSockets on ESP32',
+        'MQTT protocol & HiveMQ broker',
+        'Firebase Realtime Database',
+        'Build a React dashboard for sensor data',
+        'OTA (over-the-air) firmware updates',
+        'Deep sleep for battery saving',
+        'Bluetooth basics',
+      ]},
+      { name: 'Cool Home Projects', duration: 'Ongoing', topics: [
+        'Smart desk lamp (app-controlled via WiFi)',
+        'Room environment dashboard (temp/humidity/CO2)',
+        'Automatic plant watering system',
+        'Motion-triggered security alert',
+        'Krar chromatic tuner (mic + FFT + OLED) 🎵',
+        'Smart power monitor',
+        'IoT weather station with Next.js dashboard',
+      ]},
+    ]
+  }
+];
+
+const RESOURCES = [
+  // ── JavaScript Deep Dive ──
+  { phase:'JavaScript Deep Dive', track:'web', role:'primary', title:'JavaScript Full Course – Bro Code', type:'free', url:'https://www.youtube.com/watch?v=8dWL3wF_OMw' },
+  { phase:'JavaScript Deep Dive', track:'web', role:'supplement', title:'ES6 Tutorial – Net Ninja', type:'free', url:'https://www.youtube.com/playlist?list=PL4cUxeGkcC9gKfw25slm4CUDUcM_sXdml' },
+  { phase:'JavaScript Deep Dive', track:'web', role:'reference', title:'javascript.info – Free JS Textbook', type:'free', url:'https://javascript.info' },
+
+  // ── React ──
+  { phase:'React', track:'web', role:'warmup', title:'React Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=LDB4uaJ87e0' },
+  { phase:'React', track:'web', role:'primary', title:'React Full Course – Bro Code', type:'free', url:'https://www.youtube.com/watch?v=CgkZ7MvWUAA' },
+  { phase:'React', track:'web', role:'supplement', title:'React Hooks Deep Dive – Net Ninja', type:'free', url:'https://www.youtube.com/playlist?list=PL4cUxeGkcC9hNokByJilPg5g9m2APUePI' },
+  { phase:'React', track:'web', role:'supplement', title:'Full Stack React Project – JavaScript Mastery', type:'free', url:'https://www.youtube.com/watch?v=_oO4Qi5aVZs' },
+
+  // ── Node.js + Express ──
+  { phase:'Node.js + Express', track:'web', role:'warmup', title:'Node.js Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=fBNz5xF-Kx4' },
+  { phase:'Node.js + Express', track:'web', role:'primary', title:'Node.js & Express Full Course – Dave Gray', type:'free', url:'https://www.youtube.com/playlist?list=PL0Zuz27SZ-6PFkIxaJ6Xx_X46avTM1aYw' },
+  { phase:'Node.js + Express', track:'web', role:'supplement', title:'MongoDB Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=-56x56UppqQ' },
+
+  // ── Next.js ──
+  { phase:'Next.js', track:'web', role:'warmup', title:'Next.js Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=mTz0GXj8NN0' },
+  { phase:'Next.js', track:'web', role:'primary', title:'Next.js Full Course – Dave Gray', type:'free', url:'https://www.youtube.com/playlist?list=PL0Zuz27SZ-6Pk-QJIdGd1tGZEzy9RTgtj' },
+  { phase:'Next.js', track:'web', role:'supplement', title:'Full Stack Next.js App – JavaScript Mastery', type:'free', url:'https://www.youtube.com/watch?v=wm5gMKuwSYk' },
+
+  // ── Vue.js ──
+  { phase:'Vue.js', track:'web', role:'warmup', title:'Vue Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=VeNfHj6MhgA' },
+  { phase:'Vue.js', track:'web', role:'primary', title:'Vue 3 Full Course – Net Ninja', type:'free', url:'https://www.youtube.com/playlist?list=PL4cUxeGkcC9hYYGbV60Vq3IXYNfDk8At1' },
+
+  // ── React Native ──
+  { phase:'React Native', track:'mobile', role:'warmup', title:'React Native Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=0-S5a0eXPoc' },
+  { phase:'React Native', track:'mobile', role:'primary', title:'React Native Full Course – Bro Code', type:'free', url:'https://www.youtube.com/watch?v=jQs3PJdpDv4' },
+  { phase:'React Native', track:'mobile', role:'supplement', title:'React Native with Expo – JavaScript Mastery', type:'free', url:'https://www.youtube.com/watch?v=ZBCUegTZF7M' },
+
+  // ── SwiftUI ──
+  { phase:'SwiftUI — GymSplit!', track:'mobile', role:'primary', title:'100 Days of SwiftUI – Paul Hudson', type:'free', url:'https://www.youtube.com/watch?v=ug6T-iFk5OY&list=PLAyJSrnNA9zEYS4mLb9rkUxsVXSCz_rRy' },
+  { phase:'SwiftUI — GymSplit!', track:'mobile', role:'supplement', title:'Real-World SwiftUI – Sean Allen (Channel)', type:'free', url:'https://www.youtube.com/@SeanAllen' },
+  { phase:'SwiftUI — GymSplit!', track:'mobile', role:'supplement', title:'SwiftUI Apple Official Tutorials', type:'free', url:'https://developer.apple.com/tutorials/swiftui' },
+
+  // ── Kotlin ──
+  { phase:'Kotlin + Jetpack Compose', track:'mobile', role:'warmup', title:'Jetpack Compose Crash Course – Philipp Lackner', type:'free', url:'https://www.youtube.com/watch?v=cDabx3SjuOY' },
+  { phase:'Kotlin + Jetpack Compose', track:'mobile', role:'primary', title:'Android Full Course – Philipp Lackner', type:'free', url:'https://www.youtube.com/playlist?list=PLQkwcJG4YTCQR_Q4LDf_UjJV3e8XRFMKf' },
+  { phase:'Kotlin + Jetpack Compose', track:'mobile', role:'supplement', title:'Android Dev Official Courses (free)', type:'free', url:'https://developer.android.com/courses' },
+
+  // ── Python ──
+  { phase:'Python Fundamentals', track:'ai', role:'primary', title:'Python Full Course – Bro Code', type:'free', url:'https://www.youtube.com/watch?v=XKHEtdqhLK8' },
+  { phase:'Python Fundamentals', track:'ai', role:'supplement', title:'Python for Beginners – CS Dojo', type:'free', url:'https://www.youtube.com/playlist?list=PLBZBJbE_rGRWeh5mIBhD-hhDwSEDxogDg' },
+  { phase:'Python Fundamentals', track:'ai', role:'reference', title:'CS50P – Harvard Python (free)', type:'free', url:'https://cs50.harvard.edu/python/' },
+
+  // ── ML ──
+  { phase:'ML Fundamentals', track:'ai', role:'primary', title:'ML Course – Andrew Ng / Stanford', type:'free', url:'https://www.youtube.com/playlist?list=PLoROMvodv4rMiGQp3WXShtMGgzqpfVfbU' },
+  { phase:'ML Fundamentals', track:'ai', role:'supplement', title:'Practical Deep Learning – fast.ai', type:'free', url:'https://www.youtube.com/playlist?list=PLfYUBJiXbdtSvpQjSnJJ_PmDQB_VyT5iU' },
+  { phase:'ML Fundamentals', track:'ai', role:'supplement', title:'ML with Python – Sentdex', type:'free', url:'https://www.youtube.com/playlist?list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v' },
+  { phase:'ML Fundamentals', track:'ai', role:'supplement', title:'Kaggle Learn – Free ML Micro-courses', type:'free', url:'https://www.kaggle.com/learn' },
+
+  // ── AI Integration ──
+  { phase:'AI Integration', track:'ai', role:'primary', title:'DeepLearning.ai Short Courses – Andrew Ng', type:'free', url:'https://www.deeplearning.ai/short-courses/' },
+  { phase:'AI Integration', track:'ai', role:'supplement', title:'OpenAI API Crash Course – Traversy Media', type:'free', url:'https://www.youtube.com/watch?v=o_joulYVndM' },
+  { phase:'AI Integration', track:'ai', role:'supplement', title:'LangChain Full Course – freeCodeCamp', type:'free', url:'https://www.youtube.com/watch?v=lG7Uxts9SXs' },
+
+  // ── Arduino ──
+  { phase:'Arduino Basics', track:'arduino', role:'warmup', title:'Arduino Crash Course Overview – Paul McWhorter', type:'free', url:'https://www.youtube.com/watch?v=nL34zDTPkcs' },
+  { phase:'Arduino Basics', track:'arduino', role:'primary', title:'Arduino Step by Step (60+ videos) – Paul McWhorter', type:'free', url:'https://www.youtube.com/playlist?list=PLGs0VKk2DiYx6CMdOQR_hmJ2NbB4mZQn-' },
+
+  // ── ESP32 ──
+  { phase:'ESP32 + IoT', track:'arduino', role:'primary', title:'ESP32 Tutorials – Random Nerd Tutorials', type:'free', url:'https://www.youtube.com/c/RandomNerdTutorials' },
+  { phase:'ESP32 + IoT', track:'arduino', role:'supplement', title:'ESP32 Full Course – freeCodeCamp', type:'free', url:'https://www.youtube.com/watch?v=jhjZZkKupk8' },
+];
+
+const CHANNELS = [
+  { name:'Traversy Media', desc:'Best crash courses for every web technology', url:'https://www.youtube.com/@TraversyMedia' },
+  { name:'Fireship', desc:'100-second concept explainers, perfect mental models', url:'https://www.youtube.com/@Fireship' },
+  { name:'JavaScript Mastery', desc:'Full project builds, very visual and modern', url:'https://www.youtube.com/@javascriptmastery' },
+  { name:'Net Ninja', desc:'Clean structured playlists for every framework', url:'https://www.youtube.com/@NetNinja' },
+  { name:'Bro Code', desc:'Long full courses, beginner friendly', url:'https://www.youtube.com/@BroCodez' },
+  { name:'Dave Gray', desc:'Node.js and Next.js, very well structured', url:'https://www.youtube.com/@DaveGrayTeachesCode' },
+  { name:'Philipp Lackner', desc:'Best Kotlin & Android teacher on YouTube', url:'https://www.youtube.com/@PhilippLackner' },
+  { name:'Hacking with Swift', desc:'Everything SwiftUI — Paul Hudson', url:'https://www.youtube.com/@twostraws' },
+  { name:'Sean Allen', desc:'Real-world Swift and iOS development', url:'https://www.youtube.com/@SeanAllen' },
+  { name:'Paul McWhorter', desc:'Best beginner Arduino series', url:'https://www.youtube.com/@paulmcwhorter' },
+  { name:'Kevin Powell', desc:'CSS mastery, still very relevant', url:'https://www.youtube.com/@KevinPowell' },
+  { name:'Web Dev Simplified', desc:'Short focused web dev explanations', url:'https://www.youtube.com/@WebDevSimplified' },
+  { name:'freeCodeCamp', desc:'Long full courses on almost every topic', url:'https://www.youtube.com/@freecodecamp' },
+];
+
+// ── STATE ─────────────────────────────────────────────
+function loadState() {
+  try {
+    const s = localStorage.getItem('sofdev_v2');
+    return s ? JSON.parse(s) : { done: {}, days: {}, logs: [] };
+  } catch { return { done: {}, days: {}, logs: [] }; }
+}
+
+function saveState() {
+  try { localStorage.setItem('sofdev_v2', JSON.stringify(state)); } catch {}
+}
+
+let state = loadState();
+
+// ── NAVIGATION ────────────────────────────────────────
+function goTo(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.mnav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  // Sync sidebar nav
+  document.querySelectorAll('.nav-item[data-page="' + page + '"]').forEach(n => n.classList.add('active'));
+  // Sync mobile bottom nav
+  document.querySelectorAll('.mnav-item[data-page="' + page + '"]').forEach(n => n.classList.add('active'));
+  closeSidebar();
+  if (page === 'tracks') buildTracks();
+  if (page === 'resources') buildResources();
+  if (page === 'channels') buildChannels();
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('overlay');
+  const isOpen = sb.classList.toggle('open');
+  ov.classList.toggle('visible', isOpen);
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+// ── DATE / GREETING ───────────────────────────────────
+function initDate() {
+  const now = new Date();
+  const h = now.getHours();
+  const greeting = h < 12 ? 'GOOD MORNING' : h < 17 ? 'GOOD AFTERNOON' : 'GOOD EVENING';
+  document.getElementById('dash-greeting').textContent = greeting + ', SOFONYAS';
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-US', opts);
+  document.getElementById('log-date').textContent = now.toISOString().slice(0,10);
+}
+
+// ── STATS ─────────────────────────────────────────────
+// A phase is "done" when ALL its topics are checked
+function isPhaseComplete(trackId, phaseIdx, topics) {
+  return topics.every((_, ti) => !!state.done[trackId + '_' + phaseIdx + '_t' + ti]);
+}
+
+function calcStats() {
+  let totalPhases = 0, donePhases = 0;
+  let totalTopics = 0, doneTopics = 0;
+  const trackDoneTopics = {}, trackTotalTopics = {};
+
+  TRACKS.forEach(t => {
+    trackTotalTopics[t.id] = 0;
+    trackDoneTopics[t.id] = 0;
+    t.phases.forEach((p, i) => {
+      totalPhases++;
+      p.topics.forEach((_, ti) => {
+        totalTopics++;
+        trackTotalTopics[t.id]++;
+        if (state.done[t.id + '_' + i + '_t' + ti]) {
+          doneTopics++;
+          trackDoneTopics[t.id]++;
+        }
+      });
+      if (isPhaseComplete(t.id, i, p.topics)) donePhases++;
+    });
+  });
+  return { totalPhases, donePhases, totalTopics, doneTopics, trackDoneTopics, trackTotalTopics };
+}
+
+function updateDashboard() {
+  const { totalPhases, donePhases, totalTopics, doneTopics, trackDoneTopics, trackTotalTopics } = calcStats();
+  const pct = totalTopics ? Math.round((doneTopics / totalTopics) * 100) : 0;
+  const streak = calcStreak();
+
+  document.getElementById('stat-done').textContent = donePhases;
+  document.getElementById('stat-total').textContent = totalPhases;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-logs').textContent = state.logs.length;
+  document.getElementById('overall-pct').textContent = pct + '%';
+  document.getElementById('mega-fill').style.width = pct + '%';
+  document.getElementById('sidebar-streak').textContent = streak;
+
+  TRACKS.forEach(t => {
+    const tp = trackTotalTopics[t.id] ? Math.round((trackDoneTopics[t.id] / trackTotalTopics[t.id]) * 100) : 0;
+    const el = document.getElementById('mini-fill-' + t.id);
+    const lbl = document.getElementById('mini-pct-' + t.id);
+    if (el) el.style.width = tp + '%';
+    if (lbl) lbl.textContent = tp + '%';
+  });
+}
+
+// ── STREAK ────────────────────────────────────────────
+function calcStreak() {
+  let streak = 0;
+  const today = new Date();
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const k = d.toISOString().slice(0,10);
+    if (state.days[k]) streak++;
+    else if (i > 0) break;
+  }
+  return streak;
+}
+
+function buildCal() {
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const today = new Date();
+  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const isToday = i === 0;
+    const on = !!state.days[key];
+    const box = document.createElement('div');
+    box.className = 'cal-day' + (on ? ' on' : '') + (isToday ? ' today' : '');
+    box.title = key;
+    box.innerHTML = `<div class="cal-day-label">${days[d.getDay()]}</div>`;
+    box.onclick = () => { state.days[key] = !state.days[key]; saveState(); buildCal(); updateStreakLabel(); updateDashboard(); };
+    grid.appendChild(box);
+  }
+  updateStreakLabel();
+}
+
+function updateStreakLabel() {
+  const s = calcStreak();
+  document.getElementById('streak-count-label').textContent = s + ' day' + (s !== 1 ? 's' : '');
+  document.getElementById('sidebar-streak').textContent = s;
+}
+
+// ── DEV LOG ───────────────────────────────────────────
+function saveLog() {
+  const input = document.getElementById('log-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const today = new Date().toISOString().slice(0,10);
+  state.logs.unshift({ text, date: today });
+  if (state.logs.length > 30) state.logs = state.logs.slice(0, 30);
+  input.value = '';
+  saveState();
+  renderLogs();
+  updateDashboard();
+  showToast('✓ Entry saved');
+}
+
+function deleteLog(i) {
+  state.logs.splice(i, 1);
+  saveState();
+  renderLogs();
+  updateDashboard();
+}
+
+function renderLogs() {
+  const c = document.getElementById('saved-entries');
+  c.innerHTML = state.logs.slice(0,5).map((l, i) => `
+    <div class="entry-item">
+      <div><span class="entry-date">${l.date} · </span>${l.text}</div>
+      <div class="entry-del" onclick="deleteLog(${i})">✕</div>
+    </div>`).join('');
+}
+
+// ── TRACKS ────────────────────────────────────────────
+function buildTracks() {
+  const c = document.getElementById('tracks-container');
+  c.innerHTML = '';
+
+  TRACKS.forEach(track => {
+    // Track-level progress = topics done across all phases
+    let trackTopicTotal = 0, trackTopicDone = 0;
+    track.phases.forEach((p, i) => {
+      p.topics.forEach((_, ti) => {
+        trackTopicTotal++;
+        if (state.done[track.id + '_' + i + '_t' + ti]) trackTopicDone++;
+      });
+    });
+    const pct = trackTopicTotal ? Math.round((trackTopicDone / trackTopicTotal) * 100) : 0;
+    const r = 16; const circ = 2 * Math.PI * r;
+    const offset = circ - (pct / 100) * circ;
+
+    const section = document.createElement('div');
+    section.className = 'track-section';
+
+    const phasesHtml = track.phases.map((p, i) => {
+      const phaseComplete = isPhaseComplete(track.id, i, p.topics);
+      const topicsDone = p.topics.filter((_, ti) => !!state.done[track.id + '_' + i + '_t' + ti]).length;
+      const topicPct = Math.round((topicsDone / p.topics.length) * 100);
+
+      const topicsHtml = p.topics.map((topic, ti) => {
+        const tKey = track.id + '_' + i + '_t' + ti;
+        const checked = !!state.done[tKey];
+        return `
+          <div class="topic-item ${checked ? 'checked' : ''}" id="ti-${tKey}"
+            onclick="toggleTopic('${track.id}',${i},${ti})">
+            <div class="topic-cb" id="tcb-${tKey}"
+              style="${checked ? `background:${track.color}` : `border-color:${track.color}44`}">✓</div>
+            <div class="topic-label">${topic}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="phase-row" id="pr-${track.id}_${i}">
+          <div class="phase-check-btn ${phaseComplete ? 'done' : ''}" id="cb-${track.id}_${i}"
+            style="${phaseComplete ? `background:${track.color};border-color:${track.color}` : `border-color:${track.color}55`}"
+            title="${phaseComplete ? 'Phase complete!' : `${topicsDone}/${p.topics.length} topics done`}">✓</div>
+          <div class="phase-row-info" style="flex:1">
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="togglePhaseTopics('${track.id}_${i}')">
+              <div>
+                <div class="phase-row-name ${phaseComplete ? 'done' : ''}">${p.name}</div>
+                <div class="phase-row-meta">${p.duration}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:${track.color}">${topicsDone}/${p.topics.length}</div>
+                <div class="chev" id="pchev-${track.id}_${i}" style="font-size:0.6rem;color:var(--muted)">▼</div>
+              </div>
+            </div>
+            <div class="phase-topic-progress">
+              <div class="phase-tp-bar">
+                <div class="phase-tp-fill" style="width:${topicPct}%;background:${track.color}"></div>
+              </div>
+              <div class="phase-tp-label" style="color:${track.color}">${topicPct}%</div>
+            </div>
+            <div class="topic-list" id="tlist-${track.id}_${i}" style="display:none">
+              ${topicsHtml}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    section.innerHTML = `
+      <div class="track-head" onclick="toggleTrackBody('${track.id}')">
+        <div class="track-head-left">
+          <div class="track-icon" style="background:${track.color}22">${track.icon}</div>
+          <div>
+            <div class="track-name-big">${track.name}</div>
+            <div class="track-sub">${track.desc}</div>
+          </div>
+        </div>
+        <div class="track-head-right">
+          <div class="track-progress-ring">
+            <svg width="38" height="38" viewBox="0 0 38 38">
+              <circle class="ring-bg" cx="19" cy="19" r="${r}"/>
+              <circle class="ring-fill" cx="19" cy="19" r="${r}"
+                stroke="${track.color}"
+                stroke-dasharray="${circ}"
+                stroke-dashoffset="${offset}"/>
+            </svg>
+            <div class="ring-text">${pct}%</div>
+          </div>
+          <div class="chev" id="chev-${track.id}">▼</div>
+        </div>
+      </div>
+      <div class="track-accent-bar" style="background:${track.color}33"></div>
+      <div class="phases-body" id="tbody-${track.id}">${phasesHtml}</div>`;
+
+    c.appendChild(section);
+  });
+}
+
+function toggleTrackBody(id) {
+  const body = document.getElementById('tbody-' + id);
+  const chev = document.getElementById('chev-' + id);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+function togglePhaseTopics(phaseKey) {
+  const list = document.getElementById('tlist-' + phaseKey);
+  const chev = document.getElementById('pchev-' + phaseKey);
+  if (!list) return;
+  const open = list.style.display === 'none';
+  list.style.display = open ? 'flex' : 'none';
+  list.style.flexDirection = 'column';
+  if (chev) chev.classList.toggle('open', open);
+}
+
+function toggleTopic(trackId, phaseIdx, topicIdx) {
+  const tKey = trackId + '_' + phaseIdx + '_t' + topicIdx;
+  state.done[tKey] = !state.done[tKey];
+
+  const track = TRACKS.find(t => t.id === trackId);
+  const phase = track.phases[phaseIdx];
+
+  // Check if all topics in this phase are now done → auto-complete phase
+  const allDone = isPhaseComplete(trackId, phaseIdx, phase.topics);
+  if (allDone) {
+    showToast('🎉 ' + phase.name + ' complete!');
+    // Briefly animate the phase check button
+    const cb = document.getElementById('cb-' + trackId + '_' + phaseIdx);
+    if (cb) { cb.classList.add('just-done'); setTimeout(() => cb.classList.remove('just-done'), 400); }
+  }
+
+  saveState();
+  buildTracks();
+
+  // Re-open the track body and topic list after rebuild
+  const body = document.getElementById('tbody-' + trackId);
+  const chev = document.getElementById('chev-' + trackId);
+  if (body) { body.classList.add('open'); }
+  if (chev) { chev.classList.add('open'); }
+  const list = document.getElementById('tlist-' + trackId + '_' + phaseIdx);
+  const pchev = document.getElementById('pchev-' + trackId + '_' + phaseIdx);
+  if (list) { list.style.display = 'flex'; list.style.flexDirection = 'column'; }
+  if (pchev) { pchev.classList.add('open'); }
+
+  updateDashboard();
+}
+
+// ── RESOURCES ─────────────────────────────────────────
+function buildResources() {
+  const colorMap = { web:'var(--web)', mobile:'var(--mobile)', ai:'var(--ai)', arduino:'var(--arduino)' };
+  const roleMap = {
+    warmup:     { label: 'Warm-Up First',    icon: '🔥' },
+    primary:    { label: 'Primary Course',   icon: '⭐' },
+    supplement: { label: 'Supplement',       icon: '➕' },
+    reference:  { label: 'Reference',        icon: '📖' },
+  };
+
+  // Group by phase
+  const byPhase = {};
+  RESOURCES.forEach(r => {
+    if (!byPhase[r.phase]) byPhase[r.phase] = [];
+    byPhase[r.phase].push(r);
+  });
+
+  const c = document.getElementById('resources-grid');
+  c.innerHTML = Object.entries(byPhase).map(([phase, items]) => {
+    const track = items[0].track;
+    const color = colorMap[track];
+    const resourcesHtml = items.map(r => {
+      const role = roleMap[r.role] || { label: r.role, icon: '•' };
+      return `
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
+          <div class="rc-role ${r.role}">
+            <span class="rc-role-icon">${role.icon}</span> ${role.label}
+          </div>
+          <div class="rc-title">${r.title}</div>
+          <a class="rc-link" href="${r.url}" target="_blank">▶ Open →</a>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="resource-card">
+        <div class="rc-header" style="margin-bottom:4px">
+          <div class="rc-track-dot" style="background:${color}"></div>
+          <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:0.9rem;color:var(--cream);flex:1;padding-right:8px">${phase}</div>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-bottom:0">${resourcesHtml}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── CHANNELS ──────────────────────────────────────────
+function buildChannels() {
+  const c = document.getElementById('channels-grid');
+  c.innerHTML = CHANNELS.map(ch => `
+    <div class="channel-card">
+      <div class="channel-name">${ch.name}</div>
+      <div class="channel-desc">${ch.desc}</div>
+      <a class="channel-link" href="${ch.url}" target="_blank">→ Subscribe</a>
+    </div>`).join('');
+}
+
+// ── SETTINGS ──────────────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sofonyas-dev-progress.json';
+  a.click();
+  showToast('✓ Progress exported');
+}
+
+function resetAll() {
+  if (confirm('Reset ALL progress, streak data, and dev log entries? This cannot be undone.')) {
+    state = { done: {}, days: {}, logs: [] };
+    saveState();
+    updateDashboard();
+    buildCal();
+    renderLogs();
+    buildTracks();
+    showToast('Progress reset');
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── INIT ──────────────────────────────────────────────
+initDate();
+updateDashboard();
+buildCal();
+renderLogs();
+</script>
+</body>
+</html>
